@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Home"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/proname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:text="R.P.A"
+            android:textColor="@color/lineandtextpurble" />
+<!--        robotics prosthetics arm-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/bluetooth"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:tint="@color/lightblue"
+                app:srcCompat="@drawable/baseline_bluetooth_24" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/messagetext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:text=""
+            android:textColor="@color/lineandtextpurble" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/batterypresentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:gravity="end|center_vertical"
+                android:textSize="15dp"
+                android:text="100%"
+                android:textColor="@color/lineandtextpurble" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill|end"
+                app:srcCompat="@drawable/battery100" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:weightSum="2">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/ch1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttondesign"
+            android:layout_weight="1"
+            android:text="chart1"
+            android:textColor="#FFFFFF"
+            android:textSize="15dp"
+            android:layout_margin="15dp"
+            android:layout_marginTop="15dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/ch2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttondesign"
+            android:layout_weight="1"
+            android:text="chart2"
+            android:textColor="#FFFFFF"
+            android:textSize="15dp"
+            android:layout_margin="15dp"
+            android:layout_marginTop="15dp"/>
+
+
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/chart_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"/>
+
+
+</LinearLayout>
