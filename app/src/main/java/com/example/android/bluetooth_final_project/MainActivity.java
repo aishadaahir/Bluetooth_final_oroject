@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler; // Our main handler that will receive callback notifications
     private ConnectedThread mConnectedThread; // bluetooth background worker thread to send and receive data
     private BluetoothSocket mBTSocket = null; // bi-directional client-to-client data path
+    private BluetoothSocket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,14 +170,7 @@ public class MainActivity extends AppCompatActivity {
         if (!mBTAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+
             }
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             mBluetoothStatus.setText(getString(R.string.BTEnable));
@@ -229,14 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void bluetoothOff() {
         if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+
         }
         mBTAdapter.disable(); // turn off
         mBluetoothStatus.setText(getString(R.string.sBTdisabl));
@@ -246,25 +234,11 @@ public class MainActivity extends AppCompatActivity {
     private void discover() {
         // Check if the device is already discovering
         if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+
         }
         if (mBTAdapter.isDiscovering()) {
             if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+
             }
             mBTAdapter.cancelDiscovery();
             Toast.makeText(getApplicationContext(), getString(R.string.DisStop), Toast.LENGTH_SHORT).show();
@@ -288,14 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // add the name to the list
                 if (androidx.core.app.ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
+
                 }
                 mBTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 mBTArrayAdapter.notifyDataSetChanged();
@@ -306,14 +273,7 @@ public class MainActivity extends AppCompatActivity {
     private void listPairedDevices() {
         mBTArrayAdapter.clear();
         if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+
         }
         mPairedDevices = mBTAdapter.getBondedDevices();
         if (mBTAdapter.isEnabled()) {
@@ -349,8 +309,27 @@ public class MainActivity extends AppCompatActivity {
             BluetoothDevice device = getPairedDeviceByName(name);
             Log.e("innnnnpaired clicked", String.valueOf(device));
             if (device != null) {
+                socket = null;
+                int counter = 0;
+                do {
+                    try {
+                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+
+                        }
+                        socket = device.createRfcommSocketToServiceRecord(BT_MODULE_UUID);
+                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        }
+                        socket.connect();
+                        mBluetoothStatus.setText(getString(R.string.action_connect));
+                    } catch (IOException e) {
+                        Log.e(TAG, "Error connecting to Bluetooth device: " + e.getMessage());
+                        Log.e("devicename", "Error connecting to Bluetooth device: " + e.getMessage());
+                        return;
+                    }
+                    counter++;
+                } while (!socket.isConnected() && counter < 3);
 //                connectToDevice(device);
-                new ConnectToDeviceTask().execute(device);
+//                new ConnectToDeviceTask().execute(device);
             }
         }
     };
@@ -359,14 +338,7 @@ public class MainActivity extends AppCompatActivity {
         String[] parts = deviceNametop.split(",");
         String deviceName = parts[0].trim(); // Extract the device name
         if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return null;
+
         }
         Set<BluetoothDevice> pairedDevices = mBTAdapter.getBondedDevices();
         for (BluetoothDevice device : pairedDevices) {
@@ -389,28 +361,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(BluetoothDevice... devices) {
             BluetoothDevice device = devices[0];
-            try {
-                BluetoothSocket socket = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                    if (androidx.core.app.ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return null;
+            BluetoothSocket socket = null;
+
+            int counter = 0;
+            do {
+                try {
+//                            socket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
+                    if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+
                     }
-                    socket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
+                    socket = device.createRfcommSocketToServiceRecord(BT_MODULE_UUID);
                     socket.connect();
-                    // Connection successful, handle audio streaming or other tasks
+                    Log.e("connection", String.valueOf(socket.isConnected()));
+                    mBluetoothStatus.setText(getString(R.string.action_connect));
                     return true;
+                } catch (IOException e) {
+                    Log.e(TAG, "Error connecting to Bluetooth device: " + e.getMessage());
+                    Log.e("devicename", "Error connecting to Bluetooth device: " + e.getMessage());
+                    Log.e("devicename", String.valueOf(counter));
                 }
-            } catch (IOException e) {
-                // Connection failed, handle the exception
-                e.printStackTrace();
-            }
+                counter++;
+            } while (!Objects.requireNonNull(socket).isConnected() && counter < 10);
+
             return false;
         }
 
@@ -436,14 +408,7 @@ public class MainActivity extends AppCompatActivity {
             BluetoothSocket socket = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                 if (androidx.core.app.ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
+
                 }
                 socket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
                 socket.connect();
@@ -467,14 +432,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "Could not create Insecure RFComm Connection", e);
         }
         if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return null;
+
         }
         return device.createRfcommSocketToServiceRecord(BT_MODULE_UUID);
     }

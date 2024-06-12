@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.RadarChart;
 
@@ -39,12 +40,12 @@ public class Home extends AppCompatActivity {
     private BluetoothSocket mBluetoothSocket;
     private InputStream mInputStream;
 
-
-
+    private final static int REQUEST_ENABLE_BT = 1;
     private FrameLayout radarChartContainer;
     AppCompatButton chart1,chart2;
     ImageView imageView,bluetooth;
     TextView batterypresentage,messagetext;
+    BluetoothAdapter mBluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +106,28 @@ public class Home extends AppCompatActivity {
         });
 
 
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        //turn on bluetooth if turned off
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+
+            }
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            Toast.makeText(getApplicationContext(), getString(R.string.sBTturON), Toast.LENGTH_SHORT).show();
+
+        }
+
+
+        connecttoarduino();
+
+
+
+
+    }
+
+    public void connecttoarduino(){
         if (ActivityCompat.checkSelfPermission(Home.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
         }
         Log.e("devicename", mBluetoothAdapter.getBondedDevices().toString());
@@ -114,13 +136,12 @@ public class Home extends AppCompatActivity {
         // Get the default Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         for (BluetoothDevice device : pairedDevices) {
 //            Log.e("devicename",device.getName());
             if (device.getName().equals("HC-05")) {
                 mBluetoothDevice = device;
-//                Log.e("devicename",device.getAddress());
+                Log.e("devicewhole", String.valueOf(device));
 //                Log.e("devicename",device.getName());
                 break;
             }
@@ -146,9 +167,8 @@ public class Home extends AppCompatActivity {
 
         // Start a new thread to receive data
         new DataReceiveThread().start();
-
-
     }
+
 
     private class DataReceiveThread extends Thread {
         @Override
