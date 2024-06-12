@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,6 +151,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
             float y = getRandom(range, 50);
             values.add(new Entry(x, y)); // add one entry per hour
         }
+        Log.e("sensordata", String.valueOf(values));
 
         // create a dataset and give it a type
         LineDataSet set1 = new LineDataSet(values, "DataSet 1");
@@ -182,7 +184,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
 
         tvX.setText(String.valueOf(seekBarX.getProgress()));
 
-        setData(seekBarX.getProgress(), 50);
+        setData(30, 20);
 
         // redraw
         chart.invalidate();
