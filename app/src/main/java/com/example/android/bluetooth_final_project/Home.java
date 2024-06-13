@@ -21,12 +21,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.RadarChart;
+import com.github.mikephil.charting.data.RadarEntry;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
@@ -46,11 +48,12 @@ public class Home extends AppCompatActivity {
     ImageView imageView,bluetooth;
     TextView batterypresentage,messagetext;
     BluetoothAdapter mBluetoothAdapter;
-
+    PreferenceHelper preferenceHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        preferenceHelper = new PreferenceHelper(Home.this);
 
         Log.e("devicename","innn");
 
@@ -77,13 +80,48 @@ public class Home extends AppCompatActivity {
                 .replace(R.id.chart_container, radarChart)
                 .commit();
 
+        ArrayList<RadarEntry> entries1 = new ArrayList<>();
+        ArrayList<RadarEntry> entries2 = new ArrayList<>();
+
+//// Create the RadarEntry objects
+//                RadarEntry entry1 = new RadarEntry(0);
+//                RadarEntry entry2 = new RadarEntry(0);
+//                RadarEntry entry3 = new RadarEntry(1);
+//                RadarEntry entry4 = new RadarEntry(0);
+//                RadarEntry entry5 = new RadarEntry(0);
+//
+//// Add the entries to the lists
+//                entries1.add(entry1);
+//                entries1.add(entry2);
+//                entries1.add(entry3);
+//                entries1.add(entry4);
+//                entries1.add(entry5);
+
+        entries1.add(new RadarEntry(1));//little
+        entries1.add(new RadarEntry(1));//index
+        entries1.add(new RadarEntry(0));//middle
+        entries1.add(new RadarEntry(0));//ring
+        entries1.add(new RadarEntry(0));//pinkie
+
+        entries2.add(new RadarEntry(1));
+        entries2.add(new RadarEntry(1));
+        entries2.add(new RadarEntry(1));
+        entries2.add(new RadarEntry(1));
+        entries2.add(new RadarEntry(1));
+
+        preferenceHelper.saveEntries1(entries1);
+        preferenceHelper.saveEntries2(entries2);
+
         chart1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.chart_container, radarChart)
                         .commit();
                 refreshdata();
+//                radarChart.setData(entries1,entries2);
             }
         });
         chart2.setOnClickListener(new View.OnClickListener() {
@@ -149,24 +187,73 @@ public class Home extends AppCompatActivity {
 
         // Connect to the Bluetooth device
         int counter = 0;
+        boolean isConnected = false;
         do {
             try {
                 mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(mUUID);
                 mBluetoothSocket.connect();
                 mInputStream = mBluetoothSocket.getInputStream();
                 mInputStream.skip(mInputStream.available());
+                isConnected = true;
             } catch (IOException e) {
                 Log.e(TAG, "Error connecting to Bluetooth device: " + e.getMessage());
                 Log.e("devicename", "Error connecting to Bluetooth device: " + e.getMessage());
                 return;
             }
             counter++;
-        } while (!mBluetoothSocket.isConnected() && counter < 3);
+        } while (!isConnected && counter < 3);
+
+        if (isConnected) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(mInputStream));
+                int receivedCount = 0;
+                String line;
+                while (receivedCount < 5 && (line = reader.readLine()) != null) {
+                    // Update the UI thread with the received data
+                    String finalLine = line;
+
+
+//                    Log.e("data", line);
+                    String[] data = line.split(":");
+                    Log.e("datain", Arrays.toString(data));
+                    if(Objects.equals(data[0], "servoStates")){
+//                        Log.e("datain33", data[1]);
+                        String[] arrays = data[1].split(",");
+                        ArrayList<RadarEntry> entries1 = new ArrayList<>();
+                        for (String array : arrays) {
+                            float x = Float.parseFloat((array));
+//                            Log.e("x", String.valueOf(x));
+                            entries1.add(new RadarEntry(x));
+                        }
+                        Log.e("entries", String.valueOf(entries1));
+                        preferenceHelper.saveEntries1(entries1);
+                    }
+                    if(Objects.equals(data[0], "currentGesture")){
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            messagetext.setText(data[1] );
+                        });
+                    }
+                    receivedCount++;
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            finally {
+                try {
+                    Log.e("devicename", "innnn");
+                    mBluetoothSocket.close();
+                    System.out.println(mBluetoothSocket.isConnected());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 
 
 
         // Start a new thread to receive data
-        new DataReceiveThread().start();
+//        new DataReceiveThread().start();
     }
 
 
@@ -177,18 +264,25 @@ public class Home extends AppCompatActivity {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(mInputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Update the UI thread with the received data
                     String finalLine = line;
-//                    new Handler(Looper.getMainLooper()).post(() -> {
-//                        textViewDataDisplay.append(finalLine + "\n");
-//                    });
+
 
 //                    Log.e("data", line);
                     String[] data = line.split(":");
-//                Log.e("datain", Arrays.toString(data));
-//                Log.e("datain33", data[0]);
+                    Log.e("datain", Arrays.toString(data));
+                    if(Objects.equals(data[0], "servoStates")){
+//                        Log.e("datain33", data[1]);
+                        String[] arrays = data[1].split(",");
+                        ArrayList<RadarEntry> entries1 = new ArrayList<>();
+                        for (String array : arrays) {
+                            float x = Float.parseFloat((array));
+//                            Log.e("x", String.valueOf(x));
+                            entries1.add(new RadarEntry(x));
+                        }
+                        Log.e("entries", String.valueOf(entries1));
+                        preferenceHelper.saveEntries1(entries1);
+                    }
                     if(Objects.equals(data[0], "currentGesture")){
-                        Log.e("datain33", data[1]);
                         new Handler(Looper.getMainLooper()).post(() -> {
                             messagetext.setText(data[1] );
                         });
@@ -200,6 +294,7 @@ public class Home extends AppCompatActivity {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
 //
 //            while (true) {
 //                try {
