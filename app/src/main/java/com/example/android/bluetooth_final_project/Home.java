@@ -215,24 +215,28 @@ public class Home extends AppCompatActivity {
 
 //                    Log.e("data", line);
                     String[] data = line.split(":");
-                    Log.e("datain", Arrays.toString(data));
-                    if(Objects.equals(data[0], "servoStates")){
-//                        Log.e("datain33", data[1]);
-                        String[] arrays = data[1].split(",");
-                        ArrayList<RadarEntry> entries1 = new ArrayList<>();
-                        for (String array : arrays) {
-                            float x = Float.parseFloat((array));
-//                            Log.e("x", String.valueOf(x));
-                            entries1.add(new RadarEntry(x));
-                        }
-                        Log.e("entries", String.valueOf(entries1));
-                        preferenceHelper.saveEntries1(entries1);
-                    }
-                    if(Objects.equals(data[0], "currentGesture")){
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            messagetext.setText(data[1] );
+                    Log.e("datain", line);
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        messagetext.append(finalLine + "\n");
                         });
-                    }
+                    Log.e("datain", Arrays.toString(data));
+//                    if(Objects.equals(data[0], "servoStates")){
+////                        Log.e("datain33", data[1]);
+//                        String[] arrays = data[1].split(",");
+//                        ArrayList<RadarEntry> entries1 = new ArrayList<>();
+//                        for (String array : arrays) {
+//                            float x = Float.parseFloat((array));
+////                            Log.e("x", String.valueOf(x));
+//                            entries1.add(new RadarEntry(x));
+//                        }
+//                        Log.e("entries", String.valueOf(entries1));
+//                        preferenceHelper.saveEntries1(entries1);
+//                    }
+//                    if(Objects.equals(data[0], "currentGesture")){
+//                        new Handler(Looper.getMainLooper()).post(() -> {
+//                            messagetext.setText(data[1] );
+//                        });
+//                    }
                     receivedCount++;
                 }
             } catch (IOException e) {
