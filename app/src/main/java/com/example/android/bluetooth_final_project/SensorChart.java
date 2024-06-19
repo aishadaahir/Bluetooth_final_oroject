@@ -90,7 +90,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
         chart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
         // add data
-        seekBarX.setProgress(100);
+        seekBarX.setProgress(25);
 
         // get the legend (only possible after setting data)
         Legend l = chart.getLegend();
@@ -125,7 +125,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
         leftAxis.setDrawGridLines(true);
         leftAxis.setGranularityEnabled(true);
         leftAxis.setAxisMinimum(0f);
-        leftAxis.setAxisMaximum(170f);
+        leftAxis.setAxisMaximum(50);
         leftAxis.setYOffset(-9f);
         leftAxis.setTextColor(Color.rgb(120, 30, 56));
 
@@ -146,7 +146,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
         float to = now + count;
 
         // increment by 1 hour
-        for (float x = now; x < to; x++) {
+        for (float x = 0; x < 25; x++) {
 
             float y = getRandom(range, 50);
             values.add(new Entry(x, y)); // add one entry per hour
