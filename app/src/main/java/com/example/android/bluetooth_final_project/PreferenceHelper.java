@@ -4,12 +4,17 @@ import static android.provider.MediaStore.MediaColumns.TITLE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.github.mikephil.charting.data.RadarEntry;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,12 +22,39 @@ public class PreferenceHelper {
     private static final String PREF_FILE = "app_preferences";
     private static final String PREF_ENTRIES1 = "entries1";
     private static final String PREF_ENTRIES2 = "entries2";
-
+    private static final List<String> linedata = Collections.singletonList("linedata");
+    private static final String DATA_VALUE_KEY = "data_value";
     private Context context;
 
     public PreferenceHelper(Context context) {
         this.context = context;
     }
+
+
+    public static void saveDataValue(Context context, List<Double> dataValue) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(dataValue);
+        editor.putString(DATA_VALUE_KEY, json);
+        editor.apply();
+    }
+
+    public static List<Double> getDataValue(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+        String json = sharedPreferences.getString(DATA_VALUE_KEY, "");
+
+        if (!TextUtils.isEmpty(json)) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Double>>() {}.getType();
+            return gson.fromJson(json, type);
+        }
+
+        return new ArrayList<>();
+    }
+
+
 
     public void saveEntries1(List<RadarEntry> entries1) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
@@ -37,22 +69,6 @@ public class PreferenceHelper {
         editor.apply();
     }
 
-//    public List<RadarEntry> getEntries1() {
-//        SharedPreferences preferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
-//        String entries1String = preferences.getString(PREF_ENTRIES1, "");
-//
-//        List<RadarEntry> entries1 = new ArrayList<>();
-//        if (!entries1String.isEmpty()) {
-//            String[] entryStrings = entries1String.split("\\|");
-//            for (String entryString : entryStrings) {
-//                RadarEntry entry = createRadarEntryFromString(entryString);
-//                if (entry != null) {
-//                    entries1.add(entry);
-//                }
-//            }
-//        }
-//        return entries1;
-//    }
     public ArrayList<RadarEntry> getEntries1() {
         SharedPreferences preferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
         String entries1String = preferences.getString(PREF_ENTRIES1, "");
@@ -70,41 +86,7 @@ public class PreferenceHelper {
         }
         return entries1;
     }
-//    public ArrayList<RadarEntry> getEntries1() {
-//        SharedPreferences preferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
-//        String entries1String = preferences.getString(PREF_ENTRIES1, "");
-//
-//        ArrayList<RadarEntry> entries1 = new ArrayList<>();
-//        Log.d("PreferenceHelper", "entries1String: " + entries1String);
-//
-//        if (!entries1String.isEmpty()) {
-//            String[] entryStrings = entries1String.split("\\|");
-//            Log.d("PreferenceHelper", "entryStrings length: " + entryStrings.length);
-//            Log.e("PreferenceHelperstring", Arrays.toString(entryStrings));
-//            for (String entryString : entryStrings) {
-//                Log.e("PreferenceHelperstring", entryString);
-//                RadarEntry entry = createRadarEntryFromString(entryString);
-//                Log.d("entry", String.valueOf(entry));
-//////                if (entry != null) {
-//////                    entries1.add(entry);
-//////                }
-////                if (entry != null) {
-////                    Log.d("PreferenceHelper", "RadarEntry: " + entry.toString());
-////                    entries1.add(entry);
-////                } else {
-////                    Log.e("PreferenceHelper", "Failed to create RadarEntry from stored string");
-////                }
-//            }
-//        }
-////        String entryString = preferences.getString(PREF_ENTRIES1, "");
-////        RadarEntry entry = createRadarEntryFromString(entryString);
-////        if (entry != null) {
-////            Log.d("PreferenceHelper", "RadarEntry: " + entry.toString());
-////        } else {
-////            Log.e("PreferenceHelper", "Failed to create RadarEntry from stored string");
-////        }
-//        return entries1;
-//    }
+
 
     public void saveEntries2(List<RadarEntry> entries2) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
