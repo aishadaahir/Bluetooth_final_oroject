@@ -19,6 +19,8 @@ import com.github.mikephil.charting.data.RadarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 import com.example.android.bluetooth_final_project.custom.RadarMarkerView;
@@ -41,6 +43,9 @@ public class RedarChart extends Fragment {
     protected Typeface tfLight;
 
     PreferenceHelper preferenceHelper;
+    Timer timer;
+    ArrayList<RadarEntry> entries1;
+    ArrayList<RadarEntry> entries2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,8 +140,8 @@ public class RedarChart extends Fragment {
         mv.setChartView(chart); // For bounds control
         chart.setMarker(mv); // Set the marker to the chart
 
-        ArrayList<RadarEntry> entries1 = preferenceHelper.getEntries1();
-        ArrayList<RadarEntry> entries2 = preferenceHelper.getEntries2();
+        entries1 = preferenceHelper.getEntries1();
+        entries2 = preferenceHelper.getEntries2();
         Log.e("entries", String.valueOf(preferenceHelper.getEntries1()));
         Log.e("entries1", String.valueOf(entries1));
         Log.e("entries2", String.valueOf(entries2));
@@ -181,7 +186,39 @@ public class RedarChart extends Fragment {
         l.setYEntrySpace(5f);
         l.setTextColor(Color.rgb(130, 91, 234));
 
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                // Fetch new data and update the chart
+                updateChartData();
+            }
+        }, 0, 1000); // Run every 2 seconds
         return view;
+    }
+
+    private void updateChartData(){
+
+        entries1 = preferenceHelper.getEntries1();
+        entries2 = preferenceHelper.getEntries2();
+        Log.e("entries", String.valueOf(preferenceHelper.getEntries1()));
+        Log.e("entries1", String.valueOf(entries1));
+        Log.e("entries2", String.valueOf(entries2));
+        setData(entries1,entries2);
+
+        chart.invalidate();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        timer.cancel();
     }
 
 

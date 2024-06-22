@@ -1,5 +1,7 @@
 package com.example.android.bluetooth_final_project;
 
+import static java.lang.Math.round;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
@@ -30,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -49,6 +52,9 @@ public class Home extends AppCompatActivity {
     TextView batterypresentage,messagetext;
     BluetoothAdapter mBluetoothAdapter;
     PreferenceHelper preferenceHelper;
+    RedarChart radarChart;
+    SensorChart sensorChart;
+    private List<Double> datavalue = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,14 +72,14 @@ public class Home extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         bluetooth = findViewById(R.id.bluetooth);
 
-        refreshdata();
+//        refreshdata();
 
 
         // Create an instance of the RadarChartFragment
-        RedarChart radarChart = new RedarChart();
+        radarChart = new RedarChart();
 
         // Create an instance of the SensorChartFragment
-        SensorChart sensorChart = new SensorChart();
+        sensorChart = new SensorChart();
 
         // Replace the content of the FrameLayout with the RadarChartActivity
         getSupportFragmentManager().beginTransaction()
@@ -120,7 +126,7 @@ public class Home extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.chart_container, radarChart)
                         .commit();
-                refreshdata();
+//                refreshdata();
 //                radarChart.setData(entries1,entries2);
             }
         });
@@ -130,7 +136,7 @@ public class Home extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.chart_container, sensorChart)
                         .commit();
-                refreshdata();
+//                refreshdata();
             }
         });
 
@@ -203,23 +209,23 @@ public class Home extends AppCompatActivity {
             counter++;
         } while (!isConnected && counter < 3);
 
-        if (isConnected) {
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(mInputStream));
-                int receivedCount = 0;
-                String line;
-                while (receivedCount < 5 && (line = reader.readLine()) != null) {
-                    // Update the UI thread with the received data
-                    String finalLine = line;
-
-
-//                    Log.e("data", line);
-                    String[] data = line.split(":");
-                    Log.e("datain", line);
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        messagetext.append(finalLine + "\n");
-                        });
-                    Log.e("datain", Arrays.toString(data));
+//        if (isConnected) {
+//            try {
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(mInputStream));
+//                int receivedCount = 0;
+//                String line;
+//                while (receivedCount < 5 && (line = reader.readLine()) != null) {
+//                    // Update the UI thread with the received data
+//                    String finalLine = line;
+//
+//
+////                    Log.e("data", line);
+//                    String[] data = line.split(":");
+//                    Log.e("datain", line);
+////                    new Handler(Looper.getMainLooper()).post(() -> {
+////                        messagetext.append(finalLine + "\n");
+////                        });
+//                    Log.e("datain", Arrays.toString(data));
 //                    if(Objects.equals(data[0], "servoStates")){
 ////                        Log.e("datain33", data[1]);
 //                        String[] arrays = data[1].split(",");
@@ -237,27 +243,39 @@ public class Home extends AppCompatActivity {
 //                            messagetext.setText(data[1] );
 //                        });
 //                    }
-                    receivedCount++;
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            finally {
-                try {
-                    Log.e("devicename", "innnn");
-                    mBluetoothSocket.close();
-                    System.out.println(mBluetoothSocket.isConnected());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//                    if(Objects.equals(data[0], "emgSignal")){
+//                        Double y = Double.parseDouble(data[1]);
+//                        Log.e("ydouble", String.valueOf(y));
+//                        if (datavalue.size() >= 20) {
+//                            datavalue.remove(0);
+//                        }
+//                        datavalue.add(y);
+//                        PreferenceHelper.saveDataValue(Home.this, datavalue);
+//                        new Handler(Looper.getMainLooper()).post(() -> {
+//                            messagetext.setText(data[1] );
+//                        });
+//                    }
+//                    receivedCount++;
+//                }
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//            finally {
+//                try {
+//                    Log.e("devicename", "innnn");
+//                    mBluetoothSocket.close();
+//                    System.out.println(mBluetoothSocket.isConnected());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
 
 
 
 
         // Start a new thread to receive data
-//        new DataReceiveThread().start();
+        new DataReceiveThread().start();
     }
 
 
@@ -271,29 +289,61 @@ public class Home extends AppCompatActivity {
                     String finalLine = line;
 
 
-//                    Log.e("data", line);
+                    Log.e("data", line);
                     String[] data = line.split(":");
-                    Log.e("datain", Arrays.toString(data));
+//                    Log.e("datain", Arrays.toString(data));
                     if(Objects.equals(data[0], "servoStates")){
-//                        Log.e("datain33", data[1]);
                         String[] arrays = data[1].split(",");
                         ArrayList<RadarEntry> entries1 = new ArrayList<>();
-                        for (String array : arrays) {
-                            float x = Float.parseFloat((array));
-//                            Log.e("x", String.valueOf(x));
+                        ArrayList<RadarEntry> entries2 = new ArrayList<>();
+                        for(int i=0;i<5;i++){
+                            float x = Float.parseFloat((arrays[i]));
                             entries1.add(new RadarEntry(x));
                         }
-                        Log.e("entries", String.valueOf(entries1));
+                        Log.e("datain", arrays[5]);
+                        for(int i=0;i<5;i++){
+                            float x = Float.parseFloat((arrays[5]));
+                            entries2.add(new RadarEntry(x));
+                        }
+
+//                        for (String array : arrays) {
+//                            float x = Float.parseFloat((array));
+//                            entries1.add(new RadarEntry(x));
+//                        }
+//                        Log.e("entries", String.valueOf(entries1));
                         preferenceHelper.saveEntries1(entries1);
+                        preferenceHelper.saveEntries2(entries2);
                     }
                     if(Objects.equals(data[0], "currentGesture")){
                         new Handler(Looper.getMainLooper()).post(() -> {
                             messagetext.setText(data[1] );
                         });
                     }
+                    if(Objects.equals(data[0], "Battery level")){
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            batterypresentage.setText(data[1] );
+                            refreshdata();
+                        });
+
+
+                    }
+
+                    if(Objects.equals(data[0], "emgSignal")){
+                        Double y = Double.parseDouble(data[1]);
+//                        Log.e("ydouble", String.valueOf(y));
+                        if (datavalue.size() >= 20) {
+                            datavalue.remove(0);
+                        }
+                        datavalue.add(y);
+                        PreferenceHelper.saveDataValue(Home.this, datavalue);
+
+                    }
+//                    // Assuming you have a reference to the RadarChartFragment as 'radarChart'
+//                    getSupportFragmentManager().beginTransaction()
+//                            .replace(R.id.chart_container, sensorChart)
+//                            .commitNow();
 
                 }
-//                textViewDataDisplay.append("----------------------" + "\n");
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -325,10 +375,8 @@ public class Home extends AppCompatActivity {
     public void refreshdata(){
         Random rand = new Random();
 
-        int percent = rand.nextInt(101); // Generate a random integer between 0 and 100 (inclusive)
-        String[] handGestures = {"reverse peace sign", "peace sign", "fist", "thumbs up", "costume"};
+        int percent = Integer.parseInt(batterypresentage.getText().toString().replace("%", "").replace(" ", ""));
 
-        String gestures= handGestures[rand.nextInt(handGestures.length)];
 
 
         System.out.println("Random percentage: " + percent);
@@ -337,57 +385,49 @@ public class Home extends AppCompatActivity {
             System.out.println("Percentage is between 81% and 100%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery100);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else if (percent <= 80 && percent >= 61){
             System.out.println("Percentage is between 61% and 80%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery80);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else if (percent <= 60 && percent >= 51){
             System.out.println("Percentage is between 51% and 60%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery60);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else if (percent <= 50 && percent >= 36){
             System.out.println("Percentage is between 36% and 50%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery50);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else if (percent <= 35 && percent >= 16){
             System.out.println("Percentage is between 16% and 35%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery35);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else if (percent <= 15 && percent >= 6){
             System.out.println("Percentage is between 6% and 15%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery15);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else if (percent <= 5 && percent >= 1){
             System.out.println("Percentage is between 1% and 5%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery5);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else if (percent <= 0){
             System.out.println("Percentage is 0%.");
             imageView.setImageDrawable(null);
             imageView.setBackgroundResource(R.drawable.battery0);
-            batterypresentage.setText(String.valueOf(percent));
-//            messagetext.setText(gestures);
+
         }
         else{
             System.out.println("Invalid percentage range.");

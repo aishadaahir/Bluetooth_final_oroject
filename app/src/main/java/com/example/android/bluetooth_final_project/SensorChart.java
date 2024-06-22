@@ -39,6 +39,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +47,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeListener {
@@ -58,6 +61,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
     private List<String> xvalue = new ArrayList<>();;
     private List<Double> datavalue = new ArrayList<>();
     XAxis xAxis;
+    Timer timer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,7 +150,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
         leftAxis.setDrawGridLines(true);
         leftAxis.setGranularityEnabled(true);
         leftAxis.setAxisMinimum(0f);
-        leftAxis.setAxisMaximum(80);
+        leftAxis.setAxisMaximum(1023);
         leftAxis.setYOffset(-9f);
         leftAxis.setTextColor(Color.rgb(120, 30, 56));
 
@@ -156,7 +160,74 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
 
         firstsetData(datavalue.size(), 51);
 
+//        new refreshThread().start();
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                // Fetch new data and update the chart
+                updateChartData();
+            }
+        }, 0, 1000); // Run every 2 seconds
+
+//        requireActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                datavalue = PreferenceHelper.getDataValue(requireContext());
+//                Log.e("xvaluestring", datavalue.toString());
+//                // get the legend (only possible after setting data)
+//                Legend l = chart.getLegend();
+//                l.setEnabled(false);
+//
+//                int count=datavalue.size();
+//                for (int i = 1; i <= count; i++) {
+//                    xvalue.add(String.valueOf(i));
+//                }
+//                Log.e("xvaluestring", xvalue.toString());
+//
+//                firstsetData(datavalue.size(), 51);
+//                chart.invalidate();
+//            }
+//        });
+
+//        if (!getFragmentManager().isDestroyed() && !getFragmentManager().isStateSaved()) {
+//            getParentFragmentManager().beginTransaction()
+//                    .replace(R.id.chart_container, this)
+//                    .commit();
+//        }
+
         return view;
+    }
+
+    private void updateChartData(){
+        datavalue = PreferenceHelper.getDataValue(requireContext());
+        Log.e("xvaluestring", datavalue.toString());
+        // get the legend (only possible after setting data)
+        Legend l = chart.getLegend();
+        l.setEnabled(false);
+
+        xvalue.clear();
+        int count=datavalue.size();
+        for (int i = 1; i <= count; i++) {
+            xvalue.add(String.valueOf(i));
+        }
+        Log.e("xvaluestring", xvalue.toString());
+
+        firstsetData(datavalue.size(), 51);
+        chart.invalidate();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        timer.cancel();
     }
 
     private void firstsetData(int count, float range) {
