@@ -7,11 +7,10 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.Set;
 
-import com.example.android.bluetooth_final_project.BluetoothSerialClient;
-import com.example.android.bluetooth_final_project.BluetoothSerialClient.BluetoothStreamingHandler;
-import com.example.android.bluetooth_final_project.BluetoothSerialClient.OnBluetoothEnabledListener;
-import com.example.android.bluetooth_final_project.BluetoothSerialClient.OnScanListener;
-import com.example.android.bluetooth_final_project.R;
+import com.example.android.bluetooth_final_project.utils.BluetoothSerialClient;
+import com.example.android.bluetooth_final_project.utils.BluetoothSerialClient.BluetoothStreamingHandler;
+import com.example.android.bluetooth_final_project.utils.BluetoothSerialClient.OnBluetoothEnabledListener;
+import com.example.android.bluetooth_final_project.utils.BluetoothSerialClient.OnScanListener;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

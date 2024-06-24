@@ -39,9 +39,6 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".DataReceiveActivity"
-            android:exported="false" />
-        <activity
             android:name=".RadarChartActivity"
             android:exported="false" />
         <activity

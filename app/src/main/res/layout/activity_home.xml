@@ -37,7 +37,14 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 app:tint="@color/lightblue"
+                android:layout_marginEnd="15dp"
                 app:srcCompat="@drawable/baseline_bluetooth_24" />
+            <ImageView
+                android:id="@+id/custome"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:tint="@color/lightblue"
+                app:srcCompat="@drawable/baseline_edit_note_24" />
         </LinearLayout>
 
     </LinearLayout>
@@ -92,7 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="0dp"
         android:weightSum="2">
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/ch1"
@@ -121,6 +128,32 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:visibility="gone"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/refresh"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:tint="@color/lightblue"
+                app:srcCompat="@android:drawable/stat_notify_sync_noanim" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/chart_container"

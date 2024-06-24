@@ -48,12 +48,13 @@ public class Home extends AppCompatActivity {
     private final static int REQUEST_ENABLE_BT = 1;
     private FrameLayout radarChartContainer;
     AppCompatButton chart1,chart2;
-    ImageView imageView,bluetooth;
+    ImageView imageView,bluetooth,editcustome;
     TextView batterypresentage,messagetext;
     BluetoothAdapter mBluetoothAdapter;
     PreferenceHelper preferenceHelper;
     RedarChart radarChart;
     SensorChart sensorChart;
+    EditCustomeFragment custome;
     private List<Double> datavalue = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class Home extends AppCompatActivity {
         radarChartContainer = findViewById(R.id.chart_container);
         chart1 = findViewById(R.id.ch1);
         chart2 = findViewById(R.id.ch2);
+        editcustome = findViewById(R.id.custome);
 
         messagetext = findViewById(R.id.messagetext);
         batterypresentage = findViewById(R.id.batterypresentage);
@@ -81,42 +83,32 @@ public class Home extends AppCompatActivity {
         // Create an instance of the SensorChartFragment
         sensorChart = new SensorChart();
 
+        // Create an instance of the EditCustomeFragment
+        custome = new EditCustomeFragment();
+
         // Replace the content of the FrameLayout with the RadarChartActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.chart_container, radarChart)
                 .commit();
 
-        ArrayList<RadarEntry> entries1 = new ArrayList<>();
-        ArrayList<RadarEntry> entries2 = new ArrayList<>();
+//        ArrayList<RadarEntry> entries1 = new ArrayList<>();
+//        ArrayList<RadarEntry> entries2 = new ArrayList<>();
 
-//// Create the RadarEntry objects
-//                RadarEntry entry1 = new RadarEntry(0);
-//                RadarEntry entry2 = new RadarEntry(0);
-//                RadarEntry entry3 = new RadarEntry(1);
-//                RadarEntry entry4 = new RadarEntry(0);
-//                RadarEntry entry5 = new RadarEntry(0);
+
+//        entries1.add(new RadarEntry(1));//little
+//        entries1.add(new RadarEntry(1));//index
+//        entries1.add(new RadarEntry(0));//middle
+//        entries1.add(new RadarEntry(0));//ring
+//        entries1.add(new RadarEntry(0));//pinkie
 //
-//// Add the entries to the lists
-//                entries1.add(entry1);
-//                entries1.add(entry2);
-//                entries1.add(entry3);
-//                entries1.add(entry4);
-//                entries1.add(entry5);
-
-        entries1.add(new RadarEntry(1));//little
-        entries1.add(new RadarEntry(1));//index
-        entries1.add(new RadarEntry(0));//middle
-        entries1.add(new RadarEntry(0));//ring
-        entries1.add(new RadarEntry(0));//pinkie
-
-        entries2.add(new RadarEntry(1));
-        entries2.add(new RadarEntry(1));
-        entries2.add(new RadarEntry(1));
-        entries2.add(new RadarEntry(1));
-        entries2.add(new RadarEntry(1));
-
-        preferenceHelper.saveEntries1(entries1);
-        preferenceHelper.saveEntries2(entries2);
+//        entries2.add(new RadarEntry(1));
+//        entries2.add(new RadarEntry(1));
+//        entries2.add(new RadarEntry(1));
+//        entries2.add(new RadarEntry(1));
+//        entries2.add(new RadarEntry(1));
+//
+//        preferenceHelper.saveEntries1(entries1);
+//        preferenceHelper.saveEntries2(entries2);
 
         chart1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +129,15 @@ public class Home extends AppCompatActivity {
                         .replace(R.id.chart_container, sensorChart)
                         .commit();
 //                refreshdata();
+            }
+        });
+
+        editcustome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.chart_container, custome)
+                        .commit();
             }
         });
 
