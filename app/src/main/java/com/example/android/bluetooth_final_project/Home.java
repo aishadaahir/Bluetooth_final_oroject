@@ -44,6 +44,7 @@ public class Home extends AppCompatActivity {
     private BluetoothDevice mBluetoothDevice;
     private BluetoothSocket mBluetoothSocket;
     private InputStream mInputStream;
+    public static OutputStream outputStream;
 
     private final static int REQUEST_ENABLE_BT = 1;
     private FrameLayout radarChartContainer;
@@ -199,6 +200,7 @@ public class Home extends AppCompatActivity {
             try {
                 mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(mUUID);
                 mBluetoothSocket.connect();
+                outputStream = mBluetoothSocket.getOutputStream();
                 mInputStream = mBluetoothSocket.getInputStream();
                 mInputStream.skip(mInputStream.available());
                 isConnected = true;

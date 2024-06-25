@@ -12,7 +12,7 @@ public class CustomeDatabase extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "custome.db";
     public static final String TABLE_NAME = "custome_data";
-    public static final String COL1 = "id";
+    public static final String COL1 = "ID";
     public static final String COL2 = "name";
     public static final String COL3 = "array";
 
@@ -24,8 +24,8 @@ public class CustomeDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " ( id TEXT, " +
-                " name TEXT ,"+
+        String createTable = "CREATE TABLE " + TABLE_NAME + " ( ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                " name TEXT, " +
                 " array TEXT)";
         db.execSQL(createTable);
     }
@@ -36,12 +36,11 @@ public class CustomeDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String item1,String item2,String item3) {
+    public boolean addData(String item1,String item2) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL1, item1);
-        contentValues.put(COL2, item2);
-        contentValues.put(COL3, item3);
+        contentValues.put(COL2, item1);
+        contentValues.put(COL3, item2);
 
 
         long result = db.insert(TABLE_NAME, null, contentValues);
@@ -53,19 +52,8 @@ public class CustomeDatabase extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor readsearch(String searchKeyword){
-
-        String query = "SELECT * FROM " + TABLE_NAME+" WHERE "+COL1+" LIKE ? OR "+COL2+" LIKE ?";
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] searchArgs = {"%" + searchKeyword + "%", "%" + searchKeyword + "%"};
 
 
-        Cursor cursor = null;
-        if(db != null){
-            cursor = db.rawQuery(query, searchArgs);
-        }
-        return cursor;
-    }
 
     public Cursor readAllData(){
         String query = "SELECT * FROM " + TABLE_NAME;
@@ -78,7 +66,15 @@ public class CustomeDatabase extends SQLiteOpenHelper {
         return cursor;
     }
 
-
+    public boolean deletecustome(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(TABLE_NAME, "ID=?", new String[]{id});
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     public boolean delete(){
         SQLiteDatabase db = this.getWritableDatabase();
         long result = db.delete(TABLE_NAME, null, null);
