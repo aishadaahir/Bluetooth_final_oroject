@@ -51,11 +51,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeListener {
+public class SensorChart extends Fragment {
 
     private LineChart chart;
-    private SeekBar seekBarX;
-    private TextView tvX;
+
     protected Typeface tfRegular;
     protected Typeface tfLight;
     private List<String> xvalue = new ArrayList<>();;
@@ -77,9 +76,8 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
 
         tfRegular = Typeface.createFromAsset(requireContext().getAssets(), "OpenSans-Regular.ttf");
         tfLight = Typeface.createFromAsset(requireContext().getAssets(), "OpenSans-Light.ttf");
-        tvX = view.findViewById(R.id.tvXMax);
-        seekBarX = view.findViewById(R.id.seekBar1);
-        seekBarX.setOnSeekBarChangeListener(this);
+
+
 
         chart = view.findViewById(R.id.chart1);
 
@@ -101,8 +99,6 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
         chart.setBackgroundColor(Color.WHITE);
         chart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
-        // add data
-//        seekBarX.setProgress(10);
 
 //        datavalue = Arrays.asList(12.0,5.0,27.0);
 //        datavalue.addAll(Arrays.asList(0.0));
@@ -130,17 +126,7 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
         xAxis.setGranularity(1f); // one hour
         xAxis.setValueFormatter(new IndexAxisValueFormatter(xvalue));
 
-//        xAxis.setValueFormatter(new IAxisValueFormatter() {
-//
-//            private final SimpleDateFormat mFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-//
-//            @Override
-//            public String getFormattedValue(float value, AxisBase axis) {
-//
-//                long millis = TimeUnit.HOURS.toMillis((long) value);
-//                return mFormat.format(new Date(millis));
-//            }
-//        });
+
 
 
         YAxis leftAxis = chart.getAxisLeft();
@@ -304,39 +290,5 @@ public class SensorChart extends Fragment implements SeekBar.OnSeekBarChangeList
         return (float) (Math.random() * range) + start;
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-        tvX.setText(String.valueOf(seekBarX.getProgress()));
-        Double y = (double) round((Math.random() * 51) + 1);
-        Log.e("ydouble", String.valueOf(y));
-        if (datavalue.size() >= 20) {
-            datavalue.remove(0);
-        }
-        datavalue.add(y);
-        PreferenceHelper.saveDataValue(requireContext(), datavalue);
-
-        xvalue.clear();
-        int count=datavalue.size();
-        for (int i = 1; i <= count; i++) {
-            xvalue.add(String.valueOf(i));
-        }
-        Log.e("xvaluestring", xvalue.toString());
-
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(xvalue));
-
-        firstsetData(datavalue.size(), 51);
-
-//        setData(30, 51);
-
-        // redraw
-        chart.invalidate();
-    }
-
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
 }

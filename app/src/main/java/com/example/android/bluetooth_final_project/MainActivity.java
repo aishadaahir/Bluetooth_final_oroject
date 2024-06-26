@@ -53,13 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
     // GUI Components
     private TextView mBluetoothStatus;
-    private TextView mReadBuffer;
     private Button mScanBtn;
     private Button mOffBtn;
     private Button mListPairedDevicesBtn;
-    private Button mDiscoverBtn;
+//    private Button mDiscoverBtn;
     private ListView mDevicesListView;
-    private CheckBox mLED1;
     ImageView back;
     private BluetoothAdapter mBTAdapter;
     private Set<BluetoothDevice> mPairedDevices;
@@ -69,19 +67,20 @@ public class MainActivity extends AppCompatActivity {
     private ConnectedThread mConnectedThread; // bluetooth background worker thread to send and receive data
     private BluetoothSocket mBTSocket = null; // bi-directional client-to-client data path
     private BluetoothSocket socket;
+    PreferenceHelper preferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        preferenceHelper = new PreferenceHelper(MainActivity.this);
+
         mBluetoothStatus = (TextView) findViewById(R.id.bluetooth_status);
-        mReadBuffer = (TextView) findViewById(R.id.read_buffer);
         mScanBtn = (Button) findViewById(R.id.scan);
         mOffBtn = (Button) findViewById(R.id.off);
-        mDiscoverBtn = (Button) findViewById(R.id.discover);
+//        mDiscoverBtn = (Button) findViewById(R.id.discover);
         mListPairedDevicesBtn = (Button) findViewById(R.id.paired_btn);
-        mLED1 = (CheckBox) findViewById(R.id.checkbox_led_1);
         back = findViewById(R.id.back);
 
         mBTArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
@@ -89,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         mDevicesListView = (ListView) findViewById(R.id.devices_list_view);
         mDevicesListView.setAdapter(mBTArrayAdapter); // assign model to view
         mDevicesListView.setOnItemClickListener(mDeviceClickListener);
+
+        Toast.makeText(getApplicationContext(), getString(R.string.choose), Toast.LENGTH_LONG).show();
 
         // Ask for location permission if not already allowed
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -102,39 +103,12 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
-        mHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == MESSAGE_READ) {
-                    String readMessage = null;
-                    readMessage = new String((byte[]) msg.obj, StandardCharsets.UTF_8);
-                    mReadBuffer.setText(readMessage);
-                }
-
-                if (msg.what == CONNECTING_STATUS) {
-                    char[] sConnected;
-                    if (msg.arg1 == 1)
-                        mBluetoothStatus.setText(getString(R.string.BTConnected) + msg.obj);
-                    else
-                        mBluetoothStatus.setText(getString(R.string.BTconnFail));
-                }
-            }
-        };
 
         if (mBTArrayAdapter == null) {
             // Device does not support Bluetooth
             mBluetoothStatus.setText(getString(R.string.sBTstaNF));
             Toast.makeText(getApplicationContext(), getString(R.string.sBTdevNF), Toast.LENGTH_SHORT).show();
         } else {
-
-            mLED1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mConnectedThread != null) //First check to make sure thread created
-                        mConnectedThread.write("1");
-                }
-            });
-
 
             mScanBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -157,12 +131,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            mDiscoverBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    discover();
-                }
-            });
+//            mDiscoverBtn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    discover();
+//                }
+//            });
         }
     }
 
@@ -231,28 +205,28 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Bluetooth turned Off", Toast.LENGTH_SHORT).show();
     }
 
-    private void discover() {
-        // Check if the device is already discovering
-        if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-
-        }
-        if (mBTAdapter.isDiscovering()) {
-            if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-
-            }
-            mBTAdapter.cancelDiscovery();
-            Toast.makeText(getApplicationContext(), getString(R.string.DisStop), Toast.LENGTH_SHORT).show();
-        } else {
-            if (mBTAdapter.isEnabled()) {
-                mBTArrayAdapter.clear(); // clear items
-                mBTAdapter.startDiscovery();
-                Toast.makeText(getApplicationContext(), getString(R.string.DisStart), Toast.LENGTH_SHORT).show();
-                registerReceiver(blReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-            } else {
-                Toast.makeText(getApplicationContext(), getString(R.string.BTnotOn), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+//    private void discover() {
+//        // Check if the device is already discovering
+//        if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//
+//        }
+//        if (mBTAdapter.isDiscovering()) {
+//            if (androidx.core.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//
+//            }
+//            mBTAdapter.cancelDiscovery();
+//            Toast.makeText(getApplicationContext(), getString(R.string.DisStop), Toast.LENGTH_SHORT).show();
+//        } else {
+//            if (mBTAdapter.isEnabled()) {
+//                mBTArrayAdapter.clear(); // clear items
+//                mBTAdapter.startDiscovery();
+//                Toast.makeText(getApplicationContext(), getString(R.string.DisStart), Toast.LENGTH_SHORT).show();
+//                registerReceiver(blReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+//            } else {
+//                Toast.makeText(getApplicationContext(), getString(R.string.BTnotOn), Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 
     final BroadcastReceiver blReceiver = new BroadcastReceiver() {
         @Override
@@ -295,42 +269,46 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            mBluetoothStatus.setText(getString(R.string.cConnet));
+//            mBluetoothStatus.setText(getString(R.string.cConnet));
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) view).getText().toString();
             final String address = info.substring(info.length() - 17);
             final String name = info.substring(0, info.length() - 17);
             Log.e("innnnnpaired clicked", "paired clicked");
             Log.e("innnnnpaired clicked", address);
-            Log.e("innnnnpaired clicked", name);
-            Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
-
-            // Connect to the selected paired device
-            BluetoothDevice device = getPairedDeviceByName(name);
-            Log.e("innnnnpaired clicked", String.valueOf(device));
-            if (device != null) {
-                socket = null;
-                int counter = 0;
-                do {
-                    try {
-                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-
-                        }
-                        socket = device.createRfcommSocketToServiceRecord(BT_MODULE_UUID);
-                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        }
-                        socket.connect();
-                        mBluetoothStatus.setText(getString(R.string.action_connect));
-                    } catch (IOException e) {
-                        Log.e(TAG, "Error connecting to Bluetooth device: " + e.getMessage());
-                        Log.e("devicename", "Error connecting to Bluetooth device: " + e.getMessage());
-                        return;
-                    }
-                    counter++;
-                } while (!socket.isConnected() && counter < 3);
-//                connectToDevice(device);
-//                new ConnectToDeviceTask().execute(device);
-            }
+            preferenceHelper.putBluename(MainActivity.this,address);
+            Intent i = new Intent(getApplicationContext(), Home.class);
+            startActivity(i);
+            finish();
+//            Log.e("innnnnpaired clicked", name);
+//            Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
+//
+//            // Connect to the selected paired device
+//            BluetoothDevice device = getPairedDeviceByName(name);
+//            Log.e("innnnnpaired clicked", String.valueOf(device));
+//            if (device != null) {
+//                socket = null;
+//                int counter = 0;
+//                do {
+//                    try {
+//                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+//
+//                        }
+//                        socket = device.createRfcommSocketToServiceRecord(BT_MODULE_UUID);
+//                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+//                        }
+//                        socket.connect();
+//                        mBluetoothStatus.setText(getString(R.string.action_connect));
+//                    } catch (IOException e) {
+//                        Log.e(TAG, "Error connecting to Bluetooth device: " + e.getMessage());
+//                        Log.e("devicename", "Error connecting to Bluetooth device: " + e.getMessage());
+//                        return;
+//                    }
+//                    counter++;
+//                } while (!socket.isConnected() && counter < 3);
+////                connectToDevice(device);
+////                new ConnectToDeviceTask().execute(device);
+//            }
         }
     };
 

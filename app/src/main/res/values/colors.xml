@@ -11,4 +11,5 @@
     <color name="insidepurple">#C6BEE5</color>
     <color name="lightblue">#92F3FC</color>
     <color name="line_gray">#C6C6C6</color>
+    <color name="trasparent">#00C6C6C6</color>
 </resources>

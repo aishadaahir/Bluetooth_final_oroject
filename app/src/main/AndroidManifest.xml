@@ -3,20 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-
-
-    <permission android:name="android.permission.BLUETOOTH" android:label="BLUETOOTH"
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- <uses-permission android:name="android.permission.BLUETOOTH_SCAN" /> -->
+    <permission
+        android:name="android.permission.BLUETOOTH"
+        android:label="BLUETOOTH"
         tools:ignore="ReservedSystemPermission" />
-    <permission android:name="android.permission.BLUETOOTH_ADMIN"
-        tools:ignore="ReservedSystemPermission" />
-    <permission android:name="android.permission.ACCESS_FINE_LOCATION"
-        tools:ignore="ReservedSystemPermission" />
-    <permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+    <permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
         tools:ignore="ReservedSystemPermission" />
 
     <application
@@ -30,19 +25,14 @@
         android:theme="@style/Theme.Bluetooth_final_project"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity2"
-            android:exported="false" />
-        <activity
-            android:name=".LineChartTime"
+            android:name=".Home"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".RadarChartActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Home"
+            android:name=".Splash_Screen"
+            android:theme="@style/Theme.Bluetooth_final_project.whitestatus"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

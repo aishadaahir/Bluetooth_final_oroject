@@ -12,6 +12,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.bluetooth_final_project.custom.RoundProgressDialog;
+import com.example.android.bluetooth_final_project.utils.progress;
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.data.RadarEntry;
 
@@ -57,6 +61,7 @@ public class Home extends AppCompatActivity {
     SensorChart sensorChart;
     EditCustomeFragment custome;
     private List<Double> datavalue = new ArrayList<>();
+//    private RoundProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,10 +170,16 @@ public class Home extends AppCompatActivity {
 
         }
 
+        progress.showCustomProgressDialog(Home.this, false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.e("call","function called");
 
-        connecttoarduino();
+                connecttoarduino();
 
-
+            }
+        }, 2000);
 
 
     }
@@ -181,32 +192,43 @@ public class Home extends AppCompatActivity {
 
         // Get the default Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        for (BluetoothDevice device : pairedDevices) {
+        if (preferenceHelper.getBluename(Home.this).isEmpty() || preferenceHelper.getBluename(Home.this).equals("")){
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(i);
+            finish();
+        }else{
+//            showProgressDialog();
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            for (BluetoothDevice device : pairedDevices) {
 //            Log.e("devicename",device.getName());
-            if (device.getName().equals("HC-05")) {
-                mBluetoothDevice = device;
-                Log.e("devicewhole", String.valueOf(device));
+//                if (device.getName().equals("HC-05")) {
+            if (device.getAddress().equals(preferenceHelper.getBluename(Home.this))) {
+                    mBluetoothDevice = device;
+                    Log.e("devicewhole", String.valueOf(device));
 //                Log.e("devicename",device.getName());
-                break;
+                    break;
+                }
             }
         }
+
 
         // Connect to the Bluetooth device
         int counter = 0;
         boolean isConnected = false;
         do {
             try {
+                Log.e("image", "inn");
                 mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(mUUID);
                 mBluetoothSocket.connect();
                 outputStream = mBluetoothSocket.getOutputStream();
                 mInputStream = mBluetoothSocket.getInputStream();
                 mInputStream.skip(mInputStream.available());
                 isConnected = true;
+                progress.hideCustomProgressDialog();
             } catch (IOException e) {
                 Log.e(TAG, "Error connecting to Bluetooth device: " + e.getMessage());
                 Log.e("devicename", "Error connecting to Bluetooth device: " + e.getMessage());
+                progress.hideCustomProgressDialog();
                 return;
             }
             counter++;
@@ -278,8 +300,39 @@ public class Home extends AppCompatActivity {
 
 
         // Start a new thread to receive data
+
+//        hideProgressDialog();
+
+//        progress.hideCustomProgressDialog();
         new DataReceiveThread().start();
     }
+
+
+//    private void showProgressDialog() {
+//        dialog = new RoundProgressDialog(this);
+//        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.logo_removebg);
+//        dialog.setImage(image);
+//        dialog.setProgressText("Loading...");
+//        dialog.show();
+//
+//        // Simulate loading process
+//        new Handler().postDelayed(() -> {
+//            hideProgressDialog();
+//        }, 3000);
+//    }
+//    private void showProgressDialog() {
+//        dialog = new RoundProgressDialog(this);
+//        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.logo_removebg);
+//        Log.e("image2", image.toString());
+//        dialog.setImage(image);
+//        dialog.setProgressText("Loading...");
+//        dialog.show(); // Call show() method here
+//    }
+//    private void hideProgressDialog() {
+//        if (dialog != null && dialog.isShowing()) {
+//            dialog.dismiss();
+//        }
+//    }
 
 
     private class DataReceiveThread extends Thread {

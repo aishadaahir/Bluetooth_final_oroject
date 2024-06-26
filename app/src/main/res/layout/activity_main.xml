@@ -23,46 +23,12 @@
             app:tint="@color/lightblue"
             app:srcCompat="?attr/actionModeCloseDrawable" />
     </LinearLayout>
-    <CheckBox
-        android:id="@+id/checkbox_led_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:checked="false"
-        android:scaleX="1.7"
-        android:scaleY="1.7"
-        android:text="Toggle LED"
-        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="RX:"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/read_buffer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.9"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="&lt;Read Buffer>" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
         <TextView
@@ -88,24 +54,29 @@
         android:id="@+id/scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="20dp"
         android:text="Bluetooth ON" />
 
     <Button
         android:id="@+id/off"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="20dp"
         android:text="Bluetooth OFF" />
 
     <Button
         android:id="@+id/paired_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:textSize="20dp"
         android:text="Show paired Devices" />
 
     <Button
         android:id="@+id/discover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="Discover New Devices" />
 
     <ListView

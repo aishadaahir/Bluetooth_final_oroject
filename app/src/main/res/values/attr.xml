@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="app">
+        <attr name="customFont" format="string"/>
+        <attr name="posX" format="integer"></attr>
+        <attr name="posY" format="integer"></attr>
+    </declare-styleable>
+    <!--<declare-styleable name="ScrimInsetsView">-->
+    <!--<attr name="insetForeground" format="reference|edit_text_color"/>-->
+    <!--</declare-styleable>-->
+    <declare-styleable name="CustomCircularProgressView">
+        <attr name="cpv_progress" format="float" />
+        <attr name="cpv_maxProgress" format="float" />
+        <attr name="cpv_animDuration" format="integer" />
+        <attr name="cpv_animSwoopDuration" format="integer" />
+        <attr name="cpv_animSyncDuration" format="integer" />
+        <attr name="cpv_color" format="color"/>
+        <attr name="cpv_thickness" format="dimension"/>
+        <attr name="cpv_indeterminate" format="boolean" />
+        <attr name="cpv_animAutostart" format="boolean" />
+        <attr name="cpv_animSteps" format="integer" />
+        <attr name="cpv_startAngle" format="float" />
+    </declare-styleable>
+
+    <!--OtpView-->
+    <declare-styleable name="OtpViewTheme">
+        <attr format="reference" name="otpViewStyle"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="OtpView">
+        <attr format="integer" name="itemCount"/>
+        <attr format="dimension" name="itemWidth"/>
+        <attr format="dimension" name="itemHeight"/>
+        <attr format="dimension" name="itemRadius"/>
+        <attr format="dimension" name="itemSpacing"/>
+        <attr format="dimension" name="lineWidth"/>
+        <attr format="reference|color" name="lineColor"/>
+        <attr format="enum" name="viewType">
+            <enum name="rectangle" value="0"/>
+            <enum name="line" value="1"/>
+            <enum name="none" value="2"/>
+        </attr>
+        <attr name="android:cursorVisible"/>
+        <attr format="dimension" name="cursorWidth"/>
+        <attr format="reference|color" name="cursorColor"/>
+        <attr name="android:itemBackground"/>
+        <attr format="boolean" name="hideLineWhenFilled"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="CustomView">
+        <attr name="drawableLeftCompat" format="reference"/>
+        <attr name="drawableRightCompat" format="reference"/>
+        <attr name="drawableTopCompat" format="reference"/>
+        <attr name="drawableBottomCompat" format="reference"/>
+    </declare-styleable>
+</resources>

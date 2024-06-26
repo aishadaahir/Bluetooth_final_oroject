@@ -24,12 +24,26 @@ public class PreferenceHelper {
     private static final String PREF_ENTRIES2 = "entries2";
     private static final List<String> linedata = Collections.singletonList("linedata");
     private static final String DATA_VALUE_KEY = "data_value";
+    private static final String Bluetoothname = "Bluetoothname";
     private Context context;
+
 
     public PreferenceHelper(Context context) {
         this.context = context;
     }
 
+
+    public void putBluename(Context context,String input) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString(Bluetoothname, input);
+        edit.commit();
+    }
+
+    public String getBluename(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(Bluetoothname, "");
+    }
 
     public static void saveDataValue(Context context, List<Double> dataValue) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
@@ -54,8 +68,6 @@ public class PreferenceHelper {
         return new ArrayList<>();
     }
 
-
-
     public void saveEntries1(List<RadarEntry> entries1) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -78,7 +90,7 @@ public class PreferenceHelper {
             String[] entryStrings = entries1String.split("\\|");
             for (String entryString : entryStrings) {
                 RadarEntry entry = createRadarEntryFromString(entryString);
-                Log.e("string", String.valueOf(entry));
+//                Log.e("string", String.valueOf(entry));
                 if (entry != null) {
                     entries1.add(entry);
                 }
@@ -86,7 +98,6 @@ public class PreferenceHelper {
         }
         return entries1;
     }
-
 
     public void saveEntries2(List<RadarEntry> entries2) {
         SharedPreferences preferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
@@ -127,7 +138,7 @@ public class PreferenceHelper {
             String[] entryStrings = entries2String.split("\\|");
             for (String entryString : entryStrings) {
                 RadarEntry entry = createRadarEntryFromString(entryString);
-                Log.e("string", String.valueOf(entry));
+//                Log.e("string", String.valueOf(entry));
                 if (entry != null) {
                     entries2.add(entry);
                 }
@@ -135,8 +146,6 @@ public class PreferenceHelper {
         }
         return entries2;
     }
-
-
 
 //    private RadarEntry createRadarEntryFromString(String entryString) {
 //        try {
@@ -147,7 +156,6 @@ public class PreferenceHelper {
 //            return null;
 //        }
 //    }
-
 
     private RadarEntry createRadarEntryFromString(String entryString) {
         try {
@@ -178,15 +186,15 @@ public class PreferenceHelper {
 //                    Log.e("y", String.valueOf(new RadarEntry(x, y)));
 //                    return new RadarEntry(x, y);
                 } else {
-                    Log.e("PreferenceHelper", "Unexpected format in entry data: " + entryData);
+//                    Log.e("PreferenceHelper", "Unexpected format in entry data: " + entryData);
                 }
             } else {
-                Log.e("PreferenceHelper", "Unexpected format in entry string: " + entryString);
+//                Log.e("PreferenceHelper", "Unexpected format in entry string: " + entryString);
             }
         } catch (NumberFormatException e) {
-            Log.e("PreferenceHelper", "Error parsing float values: " + e.getMessage());
+//            Log.e("PreferenceHelper", "Error parsing float values: " + e.getMessage());
         } catch (Exception e) {
-            Log.e("PreferenceHelper", "Error creating RadarEntry: " + e.getMessage());
+//            Log.e("PreferenceHelper", "Error creating RadarEntry: " + e.getMessage());
         }
         return null;
     }

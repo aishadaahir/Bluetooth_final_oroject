@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/llProgress"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="top|center"
+              android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo_removebg"/>
+
+        <com.example.android.bluetooth_final_project.utils.CustomCircularProgressView
+            android:id="@+id/ivProgressBarTwo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:padding="0dp"
+            app:cpv_color="@color/insidepurple"
+            app:cpv_indeterminate="true"
+            app:cpv_thickness="5dp"/>
+    </FrameLayout>
+</LinearLayout>

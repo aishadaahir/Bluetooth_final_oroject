@@ -51,6 +51,8 @@
     <string name="scrollViewEnd">END OF SCROLLVIEW</string>
 
 
+    <string name="choose">Choose a Bluetooth to Connect</string>
+
     <string name="BTconnFail">Connection Failed</string>
     <string name="BTConnected">Connected to Device: </string>
     <string name="sBTdevNF">"Bluetooth device not found!"</string>

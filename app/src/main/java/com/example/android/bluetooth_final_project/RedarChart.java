@@ -75,20 +75,20 @@ public class RedarChart extends Fragment {
 //            entries2.add(new RadarEntry(val2));
 //        }
 
-        Log.e("arrays", String.valueOf(entries1));
-        Log.e("arrays", String.valueOf(entries2));
-        RadarDataSet set1 = new RadarDataSet(entries1, "Fingers");
-        set1.setColor(Color.rgb(198, 190, 229));
-        set1.setFillColor(Color.rgb(198, 190, 229));
+//        Log.e("arrays", String.valueOf(entries1));
+//        Log.e("arrays", String.valueOf(entries2));
+        RadarDataSet set1 = new RadarDataSet(entries2, "wrist");
+        set1.setColor(Color.rgb(146, 243, 252));
+        set1.setFillColor(Color.rgb(146, 243, 252));
         set1.setDrawFilled(true);
         set1.setFillAlpha(180);
         set1.setLineWidth(2f);
         set1.setDrawHighlightCircleEnabled(true);
         set1.setDrawHighlightIndicators(false);
 
-        RadarDataSet set2 = new RadarDataSet(entries2, "wrist");
-        set2.setColor(Color.rgb(146, 243, 252));
-        set2.setFillColor(Color.rgb(146, 243, 252));
+        RadarDataSet set2 = new RadarDataSet(entries1, "Fingers");
+        set2.setColor(Color.rgb(198, 190, 229));
+        set2.setFillColor(Color.rgb(198, 190, 229));
         set2.setDrawFilled(true);
         set2.setFillAlpha(180);
         set2.setLineWidth(2f);
@@ -142,9 +142,9 @@ public class RedarChart extends Fragment {
 
         entries1 = preferenceHelper.getEntries1();
         entries2 = preferenceHelper.getEntries2();
-        Log.e("entries", String.valueOf(preferenceHelper.getEntries1()));
-        Log.e("entries1", String.valueOf(entries1));
-        Log.e("entries2", String.valueOf(entries2));
+//        Log.e("entries", String.valueOf(preferenceHelper.getEntries1()));
+//        Log.e("entries1", String.valueOf(entries1));
+//        Log.e("entries2", String.valueOf(entries2));
         setData(entries1,entries2);
 //        setData();
 
@@ -201,9 +201,9 @@ public class RedarChart extends Fragment {
 
         entries1 = preferenceHelper.getEntries1();
         entries2 = preferenceHelper.getEntries2();
-        Log.e("entries", String.valueOf(preferenceHelper.getEntries1()));
-        Log.e("entries1", String.valueOf(entries1));
-        Log.e("entries2", String.valueOf(entries2));
+//        Log.e("entries", String.valueOf(preferenceHelper.getEntries1()));
+//        Log.e("entries1", String.valueOf(entries1));
+//        Log.e("entries2", String.valueOf(entries2));
         setData(entries1,entries2);
 
         chart.invalidate();
