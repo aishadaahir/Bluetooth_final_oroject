@@ -1,10 +1,12 @@
 package com.example.android.bluetooth_final_project;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -235,11 +237,28 @@ public class EditCustomeFragment extends Fragment {
         Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                Cursor cursor = myDBallcustome.readAllData();
+//                if(cursor.getCount() == 0){
+//
+//                    myDBallcustome.addData(txt_name.getText().toString(),custome);
+//                    myDBallcustome.delete();
+//                    myDBallcustome.addData(txt_name.getText().toString(),custome);
+//                }
+//                else{
+//                    myDBallcustome.addData(txt_name.getText().toString(),custome);
+//                }
+
                 myDBallcustome.addData(txt_name.getText().toString(),custome);
                 Log.e("delete",custome);
                 try {
-                    Home.outputStream.write(custome.getBytes());
-                    Toast.makeText(getActivity(), "Custom sent", Toast.LENGTH_SHORT).show();
+                    if(Home.outputStream==null){
+                        showDialog();
+                    }
+                    else{
+                        Home.outputStream.write(custome.getBytes());
+                        Toast.makeText(getActivity(), "Custom sent", Toast.LENGTH_SHORT).show();
+                    }
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -253,11 +272,27 @@ public class EditCustomeFragment extends Fragment {
         Skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                Cursor cursor = myDBallcustome.readAllData();
+//                if(cursor.getCount() == 0){
+//                    myDBallcustome.addData("",custome);
+//                    myDBallcustome.delete();
+//                    myDBallcustome.addData("",custome);
+//                }
+//                else{
+//                    myDBallcustome.addData("",custome);
+//                }
+
                 myDBallcustome.addData("",custome);
+
                 Log.e("delete",custome);
                 try {
-                    Home.outputStream.write(custome.getBytes());
-                    Toast.makeText(getActivity(), "Custom sent", Toast.LENGTH_SHORT).show();
+                    if(Home.outputStream==null){
+                        showDialog();
+                    }
+                    else{
+                        Home.outputStream.write(custome.getBytes());
+                        Toast.makeText(getActivity(), "Custom sent", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -289,8 +324,8 @@ public class EditCustomeFragment extends Fragment {
             while (cursor.moveToNext()){
 
                 String id = cursor.getString(0);
-                String name = cursor.getString(1);
-                String array = cursor.getString(2);
+                String name = cursor.getString(2);
+                String array = cursor.getString(3);
                 JsonObject jsonObject=new JsonObject();
                 jsonObject.addProperty("id",id);
                 jsonObject.addProperty("name",name);
@@ -313,8 +348,8 @@ public class EditCustomeFragment extends Fragment {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onItem(int position, Intent intent) {
-                        String ID = intent.getExtras().getString("ID");
-                        Log.e("delete",ID);
+                        Long ID = Long.valueOf(intent.getExtras().getString("ID"));
+                        Log.e("delete", String.valueOf(ID));
                         myDBallcustome.deletecustome(ID);
                         Toast.makeText(getActivity(), "Custom removed from list", Toast.LENGTH_SHORT).show();
                         getlocalviewdata();
@@ -328,8 +363,14 @@ public class EditCustomeFragment extends Fragment {
                         String array = intent.getExtras().getString("array");
                         Log.e("array",array);
                         try {
-                            Home.outputStream.write(array.getBytes());
-                            Toast.makeText(getActivity(), "Custom sent", Toast.LENGTH_SHORT).show();
+                            if(Home.outputStream==null){
+                                showDialog();
+                            }
+                            else{
+                                Home.outputStream.write(array.getBytes());
+                                Toast.makeText(getActivity(), "Custom sent", Toast.LENGTH_SHORT).show();
+                            }
+
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -349,6 +390,26 @@ public class EditCustomeFragment extends Fragment {
 
         }
 
+    }
+
+    public void showDialog() {
+        // Use the Builder class for convenient dialog construction.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final androidx.appcompat.app.AlertDialog alertDialog = builder.create();
+        builder.setTitle("warning");
+        builder.setMessage("Bluetooth is not connected,\n send again when there is a connection")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        alertDialog.dismiss();
+                        alertDialog.cancel();
+                        // START THE GAME!
+                    }
+                });
+
+        builder.create().show();
+        builder.setCancelable(true);
+//         Create the AlertDialog object and return it.
+//        return builder.create();
     }
 
 }

@@ -16,7 +16,7 @@ public class Splash_Screen extends AppCompatActivity {
 
     private ImageView imageView;
     private int currentImageIndex = 0;
-    private final int[] imageResources = {R.drawable.logo_removebg22, R.drawable.logo_removebg3, R.drawable.logo_removebg};
+    private final int[] imageResources = {R.drawable.logo_removebg2, R.drawable.logo_removebg3, R.drawable.logo_removebg};
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable runnable = this::toggleImage;
     @Override

@@ -53,10 +53,28 @@ public class CustomeDatabase extends SQLiteOpenHelper {
     }
 
 
+    public boolean addData2(String item1,String item2,String item3) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL1, item1);
+        contentValues.put(COL2, item2);
+        contentValues.put(COL3, item3);
+
+
+        long result = db.insert(TABLE_NAME, null, contentValues);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
 
 
     public Cursor readAllData(){
-        String query = "SELECT * FROM " + TABLE_NAME;
+        String query = "SELECT RowId ,ID,name,array FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = null;
@@ -65,16 +83,24 @@ public class CustomeDatabase extends SQLiteOpenHelper {
         }
         return cursor;
     }
-
-    public boolean deletecustome(String id){
+    public boolean deletecustome(long rowId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long result = db.delete(TABLE_NAME, "ID=?", new String[]{id});
-        if (result == -1) {
-            return false;
-        } else {
+        int result = db.delete(TABLE_NAME, "_ROWID_=?", new String[]{String.valueOf(rowId)});
+        if (result > 0) {
             return true;
+        } else {
+            return false;
         }
     }
+//    public boolean deletecustome(String id){
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        long result = db.delete(TABLE_NAME, "ID=?", new String[]{id});
+//        if (result == -1) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
     public boolean delete(){
         SQLiteDatabase db = this.getWritableDatabase();
         long result = db.delete(TABLE_NAME, null, null);
